@@ -1,0 +1,116 @@
+Sub Create_Tables()
+
+DoCmd.RunSQL "CREATE TABLE sous_categorie(" & _
+   "Id_CategorieDeProduit COUNTER," & _
+   "Titre VARCHAR(50)," & _
+   "PRIMARY KEY(Id_CategorieDeProduit)" & _
+");"   
+
+DoCmd.RunSQL "CREATE TABLE Animaux(" & _
+   "Id_Animaux COUNTER," & _
+   "Type VARCHAR(50)," & _
+   "PRIMARY KEY(Id_Animaux)" & _
+");"   
+
+DoCmd.RunSQL "CREATE TABLE commande(" & _
+   "Id_commande COUNTER," & _
+   "date_de_commande VARCHAR(50)," & _
+   "etat enum('empty','on_going','validated',awaiting_paiment')," & _
+   "facture VARCHAR(50)," & _
+   "etat_facture enum('paid','on_going','cancelled')," & _
+   "TotalTTC DECIMAL(15,2)," & _
+   "PRIMARY KEY(Id_commande)" & _
+");"   
+
+DoCmd.RunSQL "CREATE TABLE Panier(" & _
+   "Id_Panier COUNTER," & _
+   "Id_commande INT NOT NULL," & _
+   "PRIMARY KEY(Id_Panier)," & _
+   "FOREIGN KEY(Id_commande) REFERENCES commande(Id_commande)" & _
+");"   
+
+DoCmd.RunSQL "CREATE TABLE paiement(" & _
+   "Id_paiement COUNTER," & _
+   "Libellé VARCHAR(50)," & _
+   "PRIMARY KEY(Id_paiement)" & _
+");"   
+
+DoCmd.RunSQL "CREATE TABLE categorie_produit(" & _
+   "Id_Sous_catégorie COUNTER," & _
+   "libellé VARCHAR(50)," & _
+   "PRIMARY KEY(Id_Sous_catégorie)" & _
+");"   
+
+DoCmd.RunSQL "CREATE TABLE Marques(" & _
+   "Id_Marques COUNTER," & _
+   "libellé VARCHAR(50)," & _
+   "PRIMARY KEY(Id_Marques)" & _
+");"   
+
+DoCmd.RunSQL "CREATE TABLE Client(" & _
+   "Id_Client COUNTER," & _
+   "Genre VARCHAR(1)," & _
+   "Nom VARCHAR(50)," & _
+   "Prenom VARCHAR(50)," & _
+   "Email VARCHAR(50)," & _
+   "MDP VARCHAR(50)," & _
+   "DateDeNaissance DATE," & _
+   "Adresse VARCHAR(200)," & _
+   "Adresse_de_livraison VARCHAR(500)," & _
+   "date_inscription DATE," & _
+   "Id_Panier INT NOT NULL," & _
+   "PRIMARY KEY(Id_Client)," & _
+   "FOREIGN KEY(Id_Panier) REFERENCES Panier(Id_Panier)" & _
+");"   
+
+DoCmd.RunSQL "CREATE TABLE Produit(" & _
+   "Id_Produit COUNTER," & _
+   "Titre VARCHAR(50)," & _
+   "Marque VARCHAR(50)," & _
+   "Description TEXT," & _
+   "PrixHT DECIMAL(15,2)," & _
+   "TVA DECIMAL(15,2)," & _
+   "actif enum('disponible','indisponible')," & _
+   "Id_Marques INT NOT NULL," & _
+   "Id_Animaux INT NOT NULL," & _
+   "Id_CategorieDeProduit INT NOT NULL," & _
+   "PRIMARY KEY(Id_Produit)," & _
+   "FOREIGN KEY(Id_Marques) REFERENCES Marques(Id_Marques)," & _
+   "FOREIGN KEY(Id_Animaux) REFERENCES Animaux(Id_Animaux)," & _
+   "FOREIGN KEY(Id_CategorieDeProduit) REFERENCES sous_categorie(Id_CategorieDeProduit)" & _
+");"   
+
+DoCmd.RunSQL "CREATE TABLE posséde(" & _
+   "Id_Produit INT," & _
+   "Id_Panier INT," & _
+   "PRIMARY KEY(Id_Produit, Id_Panier)," & _
+   "FOREIGN KEY(Id_Produit) REFERENCES Produit(Id_Produit)," & _
+   "FOREIGN KEY(Id_Panier) REFERENCES Panier(Id_Panier)" & _
+");"   
+
+DoCmd.RunSQL "CREATE TABLE paye(" & _
+   "Id_Client INT," & _
+   "Id_paiement INT," & _
+   "PRIMARY KEY(Id_Client, Id_paiement)," & _
+   "FOREIGN KEY(Id_Client) REFERENCES Client(Id_Client)," & _
+   "FOREIGN KEY(Id_paiement) REFERENCES paiement(Id_paiement)" & _
+");"   
+
+DoCmd.RunSQL "CREATE TABLE avoir(" & _
+   "Id_CategorieDeProduit INT," & _
+   "Id_Sous_catégorie INT," & _
+   "PRIMARY KEY(Id_CategorieDeProduit, Id_Sous_catégorie)," & _
+   "FOREIGN KEY(Id_CategorieDeProduit) REFERENCES sous_categorie(Id_CategorieDeProduit)," & _
+   "FOREIGN KEY(Id_Sous_catégorie) REFERENCES categorie_produit(Id_Sous_catégorie)" & _
+");"   
+
+DoCmd.RunSQL "CREATE TABLE note_produit(" & _
+   "Id_Client INT," & _
+   "Id_Produit INT," & _
+   "Score INT," & _
+   "PRIMARY KEY(Id_Client, Id_Produit)," & _
+   "FOREIGN KEY(Id_Client) REFERENCES Client(Id_Client)," & _
+   "FOREIGN KEY(Id_Produit) REFERENCES Produit(Id_Produit)" & _
+");"   
+
+End Sub
